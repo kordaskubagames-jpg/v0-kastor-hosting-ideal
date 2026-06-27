@@ -67,6 +67,7 @@ export const scripts = pgTable("scripts", {
   name: text("name").notNull(),
   source: text("source").notNull().default(""),
   obfuscated: text("obfuscated").notNull().default(""),
+  preset: text("preset").notNull().default("prometheus"),
   antiTamper: boolean("antiTamper").notNull().default(true),
   antiDump: boolean("antiDump").notNull().default(true),
   antiLogger: boolean("antiLogger").notNull().default(true),

@@ -6,8 +6,21 @@ function id(prefix: string) {
   return `${prefix}_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`
 }
 
+// On any auth failure we return Lua that KICKS the player out of the game.
+// The loadstring(...)() in the loader executes this immediately, so a bad key
+// or mismatched HWID boots the user before the real script can run.
 function deny(msg: string) {
-  return new Response(`-- ${msg}\nreturn false`, {
+  const reason = `[KastorHub] ${msg.replace(/"/g, "'")} — get a key at discord.gg/kastorhub`
+  const lua = `-- access denied: ${msg}
+local _p = game:GetService("Players")
+local _lp = _p.LocalPlayer
+if _lp then
+  pcall(function() _lp:Kick("${reason}") end)
+end
+-- fallback hard stop if Kick is blocked
+while true do task.wait(1e9) end
+return false`
+  return new Response(lua, {
     status: 200,
     headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" },
   })

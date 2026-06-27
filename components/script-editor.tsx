@@ -3,18 +3,21 @@
 import { useState, useTransition } from "react"
 import Link from "next/link"
 import { saveAndBuild, runSyntaxCheck } from "@/app/actions/dashboard"
+import { PRESET_META, type ObfPreset } from "@/lib/obfuscator"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import { ArrowLeft, ShieldCheck, Bug, Eye, Copy, UploadCloud, CheckCheck } from "lucide-react"
+import { ArrowLeft, ShieldCheck, Bug, Eye, Copy, UploadCloud, CheckCheck, Lock } from "lucide-react"
 
 type Script = {
   id: string
   name: string
   source: string
   obfuscated: string
+  preset: string
   antiTamper: boolean
   antiDump: boolean
   antiLogger: boolean
@@ -30,6 +33,7 @@ const toggles = [
 export function ScriptEditor({ script, baseUrl }: { script: Script; baseUrl: string }) {
   const [source, setSource] = useState(script.source)
   const [obf, setObf] = useState(script.obfuscated)
+  const [preset, setPreset] = useState<ObfPreset>((script.preset as ObfPreset) || "prometheus")
   const [protections, setProtections] = useState({
     antiTamper: script.antiTamper,
     antiDump: script.antiDump,
@@ -56,7 +60,7 @@ export function ScriptEditor({ script, baseUrl }: { script: Script; baseUrl: str
 
   const build = () => {
     startTransition(async () => {
-      const res = await saveAndBuild(script.id, source, protections)
+      const res = await saveAndBuild(script.id, source, { preset, ...protections })
       if (!res.ok) {
         toast.error(res.message)
         return
@@ -92,8 +96,37 @@ export function ScriptEditor({ script, baseUrl }: { script: Script; baseUrl: str
         {script.buildAt && <Badge className="bg-emerald-500/15 text-emerald-400">Built</Badge>}
       </div>
 
+      {/* Obfuscation preset */}
+      <Card className="mt-6 p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <Lock className="h-4 w-4 text-primary" />
+              <span className="text-sm font-semibold">Obfuscation engine</span>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {PRESET_META.find((p) => p.value === preset)?.desc}
+            </p>
+          </div>
+          <div className="w-full sm:w-56">
+            <Select value={preset} onValueChange={(v) => setPreset(v as ObfPreset)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PRESET_META.map((p) => (
+                  <SelectItem key={p.value} value={p.value}>
+                    {p.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </Card>
+
       {/* Protections */}
-      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
         {toggles.map((t) => {
           const active = protections[t.key]
           return (

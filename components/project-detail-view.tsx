@@ -70,7 +70,7 @@ export function ProjectDetailView({
   }
 
   const loaderFor = (scriptId: string) =>
-    `local key = "KF-XXXX-XXXX-XXXX"\n(loadstring or load)(game:HttpGet("${baseUrl}/v1/load/${scriptId}?key=" .. game:GetService("HttpService"):UrlEncode(key) .. "&hwid=" .. (gethwid and gethwid() or "")))()`
+    `-- KastorHub loader :: discord.gg/kastorhub\n-- Invalid key or HWID mismatch will kick the player from the game.\nlocal key = "KF-XXXX-XXXX-XXXX"\n(loadstring or load)(game:HttpGet("${baseUrl}/v1/load/${scriptId}?key=" .. game:GetService("HttpService"):UrlEncode(key) .. "&hwid=" .. (gethwid and gethwid() or "")))()`
 
   const copy = (text: string, msg = "Copied") => {
     navigator.clipboard.writeText(text)
@@ -204,7 +204,7 @@ export function ProjectDetailView({
           <div className="flex flex-wrap items-end gap-4">
             <div className="min-w-48 flex-1">
               <label className="mb-1 block text-sm font-medium">Script scope</label>
-              <Select value={scope} onValueChange={setScope}>
+              <Select value={scope} onValueChange={(v) => setScope(v ?? "all")}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -230,7 +230,7 @@ export function ProjectDetailView({
             </div>
             <div className="w-36">
               <label className="mb-1 block text-sm font-medium">Duration</label>
-              <Select value={duration} onValueChange={setDuration}>
+              <Select value={duration} onValueChange={(v) => setDuration(v ?? "7")}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

@@ -51,6 +51,13 @@ export default async function Home() {
             <span className="text-lg font-semibold">LuaForge</span>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              nativeButton={false}
+              render={<a href="https://discord.gg/kastorhub" target="_blank" rel="noopener noreferrer" />}
+            >
+              Discord
+            </Button>
             {session?.user ? (
               <Button nativeButton={false} render={<Link href="/dashboard" />}>
                 Dashboard
@@ -105,6 +112,25 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row">
+          <div className="flex items-center gap-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary">
+              <Code2 className="h-3.5 w-3.5 text-primary-foreground" />
+            </div>
+            <span>LuaForge — made by KastorHub</span>
+          </div>
+          <a
+            href="https://discord.gg/kastorhub"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-foreground underline-offset-4 hover:underline"
+          >
+            discord.gg/kastorhub
+          </a>
+        </div>
+      </footer>
     </div>
   )
 }
