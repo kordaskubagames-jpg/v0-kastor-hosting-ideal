@@ -25,7 +25,9 @@ export default async function OverviewPage() {
             Script usage, protected builds, keys, and delivery activity across your projects.
           </p>
         </div>
-        <Button render={<Link href="/dashboard/projects" />}>New project</Button>
+        <Button nativeButton={false} render={<Link href="/dashboard/projects" />}>
+          New project
+        </Button>
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

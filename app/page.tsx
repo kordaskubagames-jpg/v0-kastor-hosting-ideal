@@ -52,13 +52,17 @@ export default async function Home() {
           </div>
           <div className="flex items-center gap-2">
             {session?.user ? (
-              <Button render={<Link href="/dashboard" />}>Dashboard</Button>
+              <Button nativeButton={false} render={<Link href="/dashboard" />}>
+                Dashboard
+              </Button>
             ) : (
               <>
-                <Button variant="ghost" render={<Link href="/sign-in" />}>
+                <Button variant="ghost" nativeButton={false} render={<Link href="/sign-in" />}>
                   Sign in
                 </Button>
-                <Button render={<Link href="/sign-up" />}>Get started</Button>
+                <Button nativeButton={false} render={<Link href="/sign-up" />}>
+                  Get started
+                </Button>
               </>
             )}
           </div>
@@ -78,10 +82,12 @@ export default async function Home() {
           anti-logger protection, served at a raw endpoint your Roblox executor can run.
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
-          <Button size="lg" asChild>
-            <Link href={session?.user ? "/dashboard" : "/sign-up"}>
-              {session?.user ? "Open dashboard" : "Start protecting"}
-            </Link>
+          <Button
+            size="lg"
+            nativeButton={false}
+            render={<Link href={session?.user ? "/dashboard" : "/sign-up"} />}
+          >
+            {session?.user ? "Open dashboard" : "Start protecting"}
           </Button>
         </div>
       </section>

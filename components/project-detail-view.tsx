@@ -149,11 +149,14 @@ export function ProjectDetailView({
                   <Copy className="mr-1 h-3.5 w-3.5" />
                   Raw
                 </Button>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href={`/dashboard/scripts/${s.id}`}>
-                    <Pencil className="mr-1 h-3.5 w-3.5" />
-                    Edit
-                  </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link href={`/dashboard/scripts/${s.id}`} />}
+                >
+                  <Pencil className="mr-1 h-3.5 w-3.5" />
+                  Edit
                 </Button>
                 <Button
                   variant="ghost"
