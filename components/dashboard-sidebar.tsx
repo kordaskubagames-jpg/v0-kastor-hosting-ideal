@@ -1,11 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { authClient } from "@/lib/auth-client"
+import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Code2, LayoutGrid, Layers, KeyRound, BarChart3, LogOut } from "lucide-react"
+import { Code2, LayoutGrid, Layers, KeyRound, BarChart3 } from "lucide-react"
 
 const nav = [
   { href: "/dashboard", label: "Overview", icon: LayoutGrid },
@@ -16,13 +14,6 @@ const nav = [
 
 export function DashboardSidebar({ name, email }: { name: string; email: string }) {
   const pathname = usePathname()
-  const router = useRouter()
-
-  const signOut = async () => {
-    await authClient.signOut()
-    router.push("/sign-in")
-    router.refresh()
-  }
 
   return (
     <aside className="flex w-60 shrink-0 flex-col border-r border-border bg-sidebar">
@@ -65,10 +56,7 @@ export function DashboardSidebar({ name, email }: { name: string; email: string 
             <p className="truncate text-xs text-muted-foreground">{email}</p>
           </div>
         </div>
-        <Button variant="ghost" size="sm" className="mt-1 w-full justify-start text-muted-foreground" onClick={signOut}>
-          <LogOut className="mr-2 h-4 w-4" />
-          Sign out
-        </Button>
+
       </div>
     </aside>
   )
