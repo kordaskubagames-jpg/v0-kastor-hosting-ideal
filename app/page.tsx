@@ -1,8 +1,11 @@
 import Link from "next/link"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
 import { Button } from "@/components/ui/button"
 import { Code2, ShieldCheck, KeyRound, FileCode2, Eye, Bug } from "lucide-react"
 
 export default async function Home() {
+  const session = await auth.api.getSession({ headers: await headers() })
 
   const features = [
     {
@@ -55,9 +58,15 @@ export default async function Home() {
             >
               Discord
             </Button>
-            <Button nativeButton={false} render={<Link href="/dashboard" />}>
-              Dashboard
-            </Button>
+            {session?.user ? (
+              <Button nativeButton={false} render={<Link href="/dashboard" />}>
+                Dashboard
+              </Button>
+            ) : (
+              <Button variant="ghost" nativeButton={false} render={<Link href="/sign-in" />}>
+                Sign in
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -78,9 +87,9 @@ export default async function Home() {
           <Button
             size="lg"
             nativeButton={false}
-            render={<Link href="/dashboard" />}
+            render={<Link href={session?.user ? "/dashboard" : "/sign-in"} />}
           >
-            Start protecting
+            {session?.user ? "Open dashboard" : "Start protecting"}
           </Button>
         </div>
       </section>
