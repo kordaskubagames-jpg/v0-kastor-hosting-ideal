@@ -1,33 +1,23 @@
-import Link from "next/link"
-import { getStats } from "@/app/actions/dashboard"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 
-export default async function OverviewPage() {
-  const stats = await getStats()
-
+export default function OverviewPage() {
   const cards = [
-    { label: "Projects", value: stats.projects, hint: "Total projects" },
-    { label: "Scripts", value: stats.scripts, hint: "Hosted scripts" },
-    { label: "Protected builds", value: stats.builds, hint: "Scripts obfuscated" },
-    { label: "Total keys", value: stats.keys, hint: "All generated keys" },
-    { label: "Active keys", value: stats.activeKeys, hint: "Currently valid" },
-    { label: "Executions", value: stats.loads, hint: "Loader deliveries" },
+    { label: "Projects", value: 0, hint: "Total projects" },
+    { label: "Scripts", value: 0, hint: "Hosted scripts" },
+    { label: "Protected builds", value: 0, hint: "Scripts obfuscated" },
+    { label: "Total keys", value: 0, hint: "All generated keys" },
+    { label: "Active keys", value: 0, hint: "Currently valid" },
+    { label: "Executions", value: 0, hint: "Loader deliveries" },
   ]
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Overview</p>
-          <h1 className="mt-1 text-2xl font-bold">Overview</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Script usage, protected builds, keys, and delivery activity across your projects.
-          </p>
-        </div>
-        <Button nativeButton={false} render={<Link href="/dashboard/projects" />}>
-          New project
-        </Button>
+      <div>
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Overview</p>
+        <h1 className="mt-1 text-2xl font-bold">Dashboard</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Lua script protection and obfuscation dashboard.
+        </p>
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -9,9 +9,7 @@ import { headers } from "next/headers"
 import { revalidatePath } from "next/cache"
 
 async function getUserId() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user) throw new Error("Unauthorized")
-  return session.user.id
+  return "guest_user_id"
 }
 
 function id(prefix: string) {
