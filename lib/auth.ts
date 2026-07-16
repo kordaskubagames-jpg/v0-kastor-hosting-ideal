@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth"
 import { pool } from "@/lib/db"
 
+const hasGoogle = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET
 const hasDiscord = !!process.env.DISCORD_CLIENT_ID && !!process.env.DISCORD_CLIENT_SECRET
 
 export const auth = betterAuth({
@@ -15,13 +16,25 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: false,
   },
-  ...(hasDiscord
+  ...(hasGoogle || hasDiscord
     ? {
         socialProviders: {
-          discord: {
-            clientId: process.env.DISCORD_CLIENT_ID as string,
-            clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
-          },
+          ...(hasGoogle
+            ? {
+                google: {
+                  clientId: process.env.GOOGLE_CLIENT_ID as string,
+                  clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+                },
+              }
+            : {}),
+          ...(hasDiscord
+            ? {
+                discord: {
+                  clientId: process.env.DISCORD_CLIENT_ID as string,
+                  clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+                },
+              }
+            : {}),
         },
       }
     : {}),
