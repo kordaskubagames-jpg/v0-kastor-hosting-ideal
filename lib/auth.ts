@@ -4,40 +4,37 @@ import { pool } from "@/lib/db"
 const hasGoogle = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET
 const hasDiscord = !!process.env.DISCORD_CLIENT_ID && !!process.env.DISCORD_CLIENT_SECRET
 
+const getBaseURL = () => {
+  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+  return "http://localhost:3000"
+}
+
 export const auth = betterAuth({
   database: pool,
-  baseURL:
-    process.env.BETTER_AUTH_URL ??
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : process.env.V0_RUNTIME_URL),
+  baseURL: getBaseURL(),
   emailAndPassword: {
     enabled: false,
   },
-  ...(hasGoogle || hasDiscord
-    ? {
-        socialProviders: {
-          ...(hasGoogle
-            ? {
-                google: {
-                  clientId: process.env.GOOGLE_CLIENT_ID as string,
-                  clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-                },
-              }
-            : {}),
-          ...(hasDiscord
-            ? {
-                discord: {
-                  clientId: process.env.DISCORD_CLIENT_ID as string,
-                  clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
-                },
-              }
-            : {}),
-        },
-      }
-    : {}),
+  socialProviders: {
+    ...(hasGoogle
+      ? {
+          google: {
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+          },
+        }
+      : {}),
+    ...(hasDiscord
+      ? {
+          discord: {
+            clientId: process.env.DISCORD_CLIENT_ID as string,
+            clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+          },
+        }
+      : {}),
+  },
   plugins: [],
   trustedOrigins: [
     ...(process.env.NODE_ENV === "development"
