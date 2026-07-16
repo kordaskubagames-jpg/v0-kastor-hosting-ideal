@@ -129,7 +129,6 @@ export async function saveAndBuild(
     .set({
       source,
       obfuscated,
-      preset: opts.preset,
       antiTamper: opts.antiTamper,
       antiDump: opts.antiDump,
       antiLogger: opts.antiLogger,
@@ -153,24 +152,6 @@ export async function getKeys(projectId?: string) {
     ? and(eq(keys.userId, userId), eq(keys.projectId, projectId))
     : eq(keys.userId, userId)
   return db.select().from(keys).where(where).orderBy(desc(keys.createdAt))
-}
-
-// Projects + their scripts, for the key-generator picker on the Keys page.
-export async function getProjectsWithScripts() {
-  const userId = await getUserId()
-  const projRows = await db
-    .select()
-    .from(projects)
-    .where(eq(projects.userId, userId))
-    .orderBy(desc(projects.createdAt))
-  const scrRows = await db.select().from(scripts).where(eq(scripts.userId, userId))
-  return projRows.map((p) => ({
-    id: p.id,
-    name: p.name,
-    scripts: scrRows
-      .filter((s) => s.projectId === p.id)
-      .map((s) => ({ id: s.id, name: s.name })),
-  }))
 }
 
 export async function getKeysWithNames() {
