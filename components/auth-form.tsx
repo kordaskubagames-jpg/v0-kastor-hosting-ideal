@@ -30,15 +30,22 @@ export function AuthForm({
       setLoading(true)
       setError(null)
       console.log("[v0] Starting Google OAuth sign-in...")
-      const result = await authClient.signIn.social({ 
-        provider: "google", 
-        callbackURL: "/dashboard" 
-      })
+      console.log("[v0] Auth client baseURL:", (authClient as any).baseURL)
+      
+      const result = await Promise.race([
+        authClient.signIn.social({ 
+          provider: "google", 
+          callbackURL: "/dashboard" 
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("OAuth timeout - check your Google credentials and callback URL")), 10000)
+        )
+      ])
       console.log("[v0] Google OAuth result:", result)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to sign in with Google"
+      const errorMessage = err instanceof Error ? err.message : "Failed to sign in with Google. Check console for details."
       console.error("[v0] Google OAuth error:", err)
-      setError(errorMessage)
+      setError(`ERROR: ${errorMessage}`)
     } finally {
       setLoading(false)
     }
@@ -49,15 +56,22 @@ export function AuthForm({
       setLoading(true)
       setError(null)
       console.log("[v0] Starting Discord OAuth sign-in...")
-      const result = await authClient.signIn.social({ 
-        provider: "discord", 
-        callbackURL: "/dashboard" 
-      })
+      console.log("[v0] Auth client baseURL:", (authClient as any).baseURL)
+      
+      const result = await Promise.race([
+        authClient.signIn.social({ 
+          provider: "discord", 
+          callbackURL: "/dashboard" 
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("OAuth timeout - check your Discord credentials and callback URL")), 10000)
+        )
+      ])
       console.log("[v0] Discord OAuth result:", result)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to sign in with Discord"
+      const errorMessage = err instanceof Error ? err.message : "Failed to sign in with Discord. Check console for details."
       console.error("[v0] Discord OAuth error:", err)
-      setError(errorMessage)
+      setError(`ERROR: ${errorMessage}`)
     } finally {
       setLoading(false)
     }
