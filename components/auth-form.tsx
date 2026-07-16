@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"  // Keep useState imported if still used for loading state
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -17,7 +17,6 @@ export function AuthForm({
   discordEnabled: boolean
 }) {
   const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const done = () => {
@@ -26,55 +25,19 @@ export function AuthForm({
   }
 
   const googleSignIn = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      console.log("[v0] Starting Google OAuth sign-in...")
-      console.log("[v0] Auth client baseURL:", (authClient as any).baseURL)
-      
-      const result = await Promise.race([
-        authClient.signIn.social({ 
-          provider: "google", 
-          callbackURL: "/dashboard" 
-        }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error("OAuth timeout - check your Google credentials and callback URL")), 10000)
-        )
-      ])
-      console.log("[v0] Google OAuth result:", result)
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to sign in with Google. Check console for details."
-      console.error("[v0] Google OAuth error:", err)
-      setError(`ERROR: ${errorMessage}`)
-    } finally {
-      setLoading(false)
-    }
+    setLoading(true)
+    await authClient.signIn.social({ 
+      provider: "google", 
+      callbackURL: "/dashboard" 
+    })
   }
 
   const discordSignIn = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      console.log("[v0] Starting Discord OAuth sign-in...")
-      console.log("[v0] Auth client baseURL:", (authClient as any).baseURL)
-      
-      const result = await Promise.race([
-        authClient.signIn.social({ 
-          provider: "discord", 
-          callbackURL: "/dashboard" 
-        }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error("OAuth timeout - check your Discord credentials and callback URL")), 10000)
-        )
-      ])
-      console.log("[v0] Discord OAuth result:", result)
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to sign in with Discord. Check console for details."
-      console.error("[v0] Discord OAuth error:", err)
-      setError(`ERROR: ${errorMessage}`)
-    } finally {
-      setLoading(false)
-    }
+    setLoading(true)
+    await authClient.signIn.social({ 
+      provider: "discord", 
+      callbackURL: "/dashboard" 
+    })
   }
 
   return (
@@ -93,13 +56,6 @@ export function AuthForm({
               : "Start protecting your Lua scripts"}
           </p>
         </div>
-
-        {error && (
-          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-950/30 p-3 border border-red-200 dark:border-red-800">
-            <p className="text-sm text-red-700 dark:text-red-400 font-medium">Error:</p>
-            <p className="text-sm text-red-600 dark:text-red-300 mt-1">{error}</p>
-          </div>
-        )}
 
         <div className="flex flex-col gap-3">
           {googleEnabled && (
