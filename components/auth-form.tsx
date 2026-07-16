@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
@@ -16,6 +17,8 @@ export function AuthForm({
   discordEnabled: boolean
 }) {
   const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const done = () => {
     router.push("/dashboard")
@@ -23,11 +26,41 @@ export function AuthForm({
   }
 
   const googleSignIn = async () => {
-    await authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" })
+    try {
+      setLoading(true)
+      setError(null)
+      console.log("[v0] Starting Google OAuth sign-in...")
+      const result = await authClient.signIn.social({ 
+        provider: "google", 
+        callbackURL: "/dashboard" 
+      })
+      console.log("[v0] Google OAuth result:", result)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to sign in with Google"
+      console.error("[v0] Google OAuth error:", err)
+      setError(errorMessage)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const discordSignIn = async () => {
-    await authClient.signIn.social({ provider: "discord", callbackURL: "/dashboard" })
+    try {
+      setLoading(true)
+      setError(null)
+      console.log("[v0] Starting Discord OAuth sign-in...")
+      const result = await authClient.signIn.social({ 
+        provider: "discord", 
+        callbackURL: "/dashboard" 
+      })
+      console.log("[v0] Discord OAuth result:", result)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to sign in with Discord"
+      console.error("[v0] Discord OAuth error:", err)
+      setError(errorMessage)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -47,17 +80,36 @@ export function AuthForm({
           </p>
         </div>
 
+        {error && (
+          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-950/30 p-3 border border-red-200 dark:border-red-800">
+            <p className="text-sm text-red-700 dark:text-red-400 font-medium">Error:</p>
+            <p className="text-sm text-red-600 dark:text-red-300 mt-1">{error}</p>
+          </div>
+        )}
+
         <div className="flex flex-col gap-3">
           {googleEnabled && (
-            <Button type="button" variant="outline" className="w-full" onClick={googleSignIn}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="w-full" 
+              onClick={googleSignIn}
+              disabled={loading}
+            >
               <GoogleIcon />
-              Continue with Google
+              {loading ? "Signing in..." : "Continue with Google"}
             </Button>
           )}
           {discordEnabled && (
-            <Button type="button" variant="outline" className="w-full" onClick={discordSignIn}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="w-full" 
+              onClick={discordSignIn}
+              disabled={loading}
+            >
               <DiscordIcon />
-              Continue with Discord
+              {loading ? "Signing in..." : "Continue with Discord"}
             </Button>
           )}
         </div>

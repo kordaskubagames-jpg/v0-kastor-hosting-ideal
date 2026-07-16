@@ -1,11 +1,20 @@
 "use client"
 
 import { createAuthClient } from "better-auth/react"
-import { emailOTPClient } from "better-auth/client/plugins"
+
+const getBaseURL = () => {
+  if (typeof window !== "undefined") {
+    return window.location.origin
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+  return "http://localhost:3000"
+}
 
 export const authClient = createAuthClient({
-  baseURL: typeof window !== "undefined" ? window.location.origin : "",
-  plugins: [emailOTPClient()],
+  baseURL: getBaseURL(),
+  plugins: [],
 })
 
 export const { signIn, signUp, signOut, useSession } = authClient
