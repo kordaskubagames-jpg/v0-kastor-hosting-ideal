@@ -23,15 +23,20 @@ export function AuthForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!nickname.trim()) return
-    
+
     setLoading(true)
     try {
-      // Store nickname in session storage for now
-      localStorage.setItem("userNickname", nickname)
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nickname: nickname.trim() }),
+      })
+      if (!res.ok) throw new Error("Login failed")
+      localStorage.setItem("userNickname", nickname.trim())
       router.push("/dashboard")
       router.refresh()
     } catch (err) {
-      console.error("Error:", err)
+      console.error("Login error:", err)
     } finally {
       setLoading(false)
     }

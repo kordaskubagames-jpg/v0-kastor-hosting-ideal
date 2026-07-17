@@ -1,18 +1,17 @@
 "use server"
 
-import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { projects, scripts, keys, loads } from "@/lib/db/schema"
 import { obfuscate, checkSyntax, type ProtectionOptions } from "@/lib/obfuscator"
 import { and, desc, eq, sql } from "drizzle-orm"
-import { headers } from "next/headers"
+import { cookies } from "next/headers"
 import { revalidatePath } from "next/cache"
 
 async function getUserId() {
-  // Use a consistent user ID based on nickname - stored in cookies during login
-  const headersList = await headers()
-  // Generate stable user ID from nickname
-  return "user_default"
+  const cookieStore = await cookies()
+  const userId = cookieStore.get("kastor_user_id")?.value
+  if (!userId) throw new Error("Not logged in")
+  return userId
 }
 
 function id(prefix: string) {
