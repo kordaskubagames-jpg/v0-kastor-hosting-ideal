@@ -30,7 +30,47 @@ return false`
 //   local key = "KF-XXXX-XXXX-XXXX"
 //   (loadstring or load)(game:HttpGet("<host>/v1/load/<scriptId>?key=" ..
 //     game:GetService("HttpService"):UrlEncode(key) .. "&hwid=" .. hwid))()
+const ACCESS_DENIED_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Access Denied</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container { text-align: center; padding: 2rem; }
+    .code { font-size: 6rem; font-weight: 900; color: #ef4444; line-height: 1; }
+    h1 { font-size: 1.5rem; margin-top: 1rem; color: #f1f1f1; }
+    p { margin-top: 0.5rem; color: #666; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="code">403</div>
+    <h1>Access Denied</h1>
+    <p>This endpoint is only accessible by the executor.</p>
+  </div>
+</body>
+</html>`
+
 export async function GET(req: Request, { params }: { params: Promise<{ scriptId: string }> }) {
+  const ua = req.headers.get("user-agent") ?? ""
+  if (!ua.toLowerCase().includes("roblox")) {
+    return new Response(ACCESS_DENIED_HTML, {
+      status: 403,
+      headers: { "content-type": "text/html; charset=utf-8" },
+    })
+  }
+
   const { scriptId } = await params
   const url = new URL(req.url)
   const key = url.searchParams.get("key")?.trim()
