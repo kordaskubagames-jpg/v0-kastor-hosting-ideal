@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import { authClient } from "@/lib/auth-client"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Code2, LayoutGrid, Layers, KeyRound, BarChart3, Shield, Settings, LogOut } from "lucide-react"
@@ -23,8 +24,7 @@ export function DashboardSidebar({ name, email }: { name: string; email: string 
   const router = useRouter()
 
   const signOut = async () => {
-    await fetch("/api/logout", { method: "POST" })
-    localStorage.removeItem("userNickname")
+    await authClient.signOut()
     router.push("/sign-in")
     router.refresh()
   }

@@ -1,18 +1,19 @@
 import type React from "react"
-import { cookies } from "next/headers"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { DashboardSidebar } from "@/components/dashboard-sidebar"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies()
-  const userId = cookieStore.get("kastor_user_id")?.value
-  const nickname = cookieStore.get("kastor_nickname")?.value
-
-  if (!userId || !nickname) redirect("/sign-in")
+  const session = await auth.api.getSession({ headers: await headers() })
+  if (!session?.user) redirect("/sign-in")
 
   return (
     <div className="flex min-h-svh">
-      <DashboardSidebar name={nickname} email={`${nickname}@kastor.dev`} />
+      <DashboardSidebar
+        name={session.user.name ?? session.user.email ?? "User"}
+        email={session.user.email ?? ""}
+      />
       <main className="flex-1 overflow-x-hidden">{children}</main>
     </div>
   )

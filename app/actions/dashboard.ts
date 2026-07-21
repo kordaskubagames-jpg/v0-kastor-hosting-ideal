@@ -1,17 +1,17 @@
 "use server"
 
+import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { projects, scripts, keys, loads } from "@/lib/db/schema"
 import { obfuscate, checkSyntax, type ProtectionOptions } from "@/lib/obfuscator"
 import { and, desc, eq, sql } from "drizzle-orm"
-import { cookies } from "next/headers"
+import { headers } from "next/headers"
 import { revalidatePath } from "next/cache"
 
 async function getUserId() {
-  const cookieStore = await cookies()
-  const userId = cookieStore.get("kastor_user_id")?.value
-  if (!userId) throw new Error("Not logged in")
-  return userId
+  const session = await auth.api.getSession({ headers: await headers() })
+  if (!session?.user) throw new Error("Unauthorized")
+  return session.user.id
 }
 
 function id(prefix: string) {
