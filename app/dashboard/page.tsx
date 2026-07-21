@@ -1,13 +1,16 @@
+import { getStats } from "@/app/actions/dashboard"
 import { Card } from "@/components/ui/card"
 
-export default function OverviewPage() {
+export default async function OverviewPage() {
+  const stats = await getStats()
+
   const cards = [
-    { label: "Projects", value: 0, hint: "Total projects" },
-    { label: "Scripts", value: 0, hint: "Hosted scripts" },
-    { label: "Protected builds", value: 0, hint: "Scripts obfuscated" },
-    { label: "Total keys", value: 0, hint: "All generated keys" },
-    { label: "Active keys", value: 0, hint: "Currently valid" },
-    { label: "Executions", value: 0, hint: "Loader deliveries" },
+    { label: "Projects", value: stats.projects, hint: "Total projects" },
+    { label: "Scripts", value: stats.scripts, hint: "Hosted scripts" },
+    { label: "Protected builds", value: stats.builds, hint: "Scripts obfuscated" },
+    { label: "Total keys", value: stats.keys, hint: "All generated keys" },
+    { label: "Active keys", value: stats.activeKeys, hint: "Currently valid" },
+    { label: "Executions", value: stats.loads, hint: "Loader deliveries" },
   ]
 
   return (
@@ -15,9 +18,7 @@ export default function OverviewPage() {
       <div>
         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Overview</p>
         <h1 className="mt-1 text-2xl font-bold">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Lua script protection and obfuscation dashboard.
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">Lua script protection and obfuscation dashboard.</p>
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

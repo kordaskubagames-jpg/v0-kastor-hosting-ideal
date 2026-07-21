@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"  // Keep useState imported if still used for loading state
-import { authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Code2 } from "lucide-react"
